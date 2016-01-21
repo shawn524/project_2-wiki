@@ -1,13 +1,19 @@
 <div class="jumbotron">
   <div class="form-group">
     <form id="newArticle" method="post" class="form-horizontal" action="/article/new">
-      <label for="comment" class="control-label">Article title:</label>
+      <label for="title" class="control-label">Article title:</label>
           <div class="form-group">
               <div class="col-lg-5">
                   <input type="text" class="form-control" name="page_title" />
               </div>
           </div>
-      <label for="comment">Article content:</label>
+      <label for="tag" class="control-label">Article tag:</label>
+          <div class="form-group">
+              <div class="col-lg-5">
+                  <input type="text" class="form-control" name="page_tag" />
+              </div>
+          </div>
+      <label for="content">Article content:</label>
       <textarea class="form-control" rows="10" name="new_article" id="new_article" name="page_content"></textarea>
 
       <div class="form-group">

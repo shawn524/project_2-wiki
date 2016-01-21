@@ -103,6 +103,13 @@ $(document).ready(function() {
           }
         }
       },
+      page_tag: {
+        validators: {
+          notEmpty: {
+            message: 'The tag cannot be empty'
+          }
+        }
+      },
 
     }
   });

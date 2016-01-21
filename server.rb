@@ -60,8 +60,14 @@ module Wiki
       md = markdown.render(params[ "new_article" ])
       raw_text = params["new_article"]
       page_title = params[ "page_title" ]
+      tag = params[ "page_tag" ]
 
-      conn.exec_params("INSERT INTO page (page_title) VALUES ($1);", [ page_title ])
+      conn.exec_params("INSERT INTO tags (tag_name) VALUES ($1);", [ tag ])
+      tag_id = conn.exec_params("SELECT tag_id FROM tags WHERE tag_name = $1;",[ tag ]).first
+
+      binding.pry
+      conn.exec_params("INSERT INTO page (page_title, page_tag) VALUES ($1, $2);", [ page_title, tag_id["tag_id"] ])
+
       newest_page = conn.exec("SELECT * FROM page").to_a.last
       conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ newest_page["page_id"], session["user_id"], current_user["user_name"], raw_text, md ])
 
