@@ -1,7 +1,13 @@
 <div class="jumbotron">
   <div class="form-group">
     <form id="newArticle" method="post" class="form-horizontal" action="/new_article">
-      <label for="comment">New article:</label>
+      <label for="comment">Article title:</label>
+          <div class="form-group">
+              <div class="col-lg-5">
+                  <input type="text" class="form-control" name="page_title" />
+              </div>
+          </div>
+      <label for="comment">Article content:</label>
       <textarea class="form-control" rows="10" name="new_article" id="new_article"></textarea>
 
       <div class="form-group">

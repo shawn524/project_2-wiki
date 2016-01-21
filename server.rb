@@ -5,7 +5,8 @@ module Wiki
 
     def current_user
       if session["user_id"]
-        @user ||= conn.exec_params("SELECT * FROM users WHERE id = $1", [session["user_id"].first])
+        @user ||= conn.exec_params("SELECT * FROM users WHERE user_id = $1", [session["user_id"]])
+        # binding.pry
       else
         # THE USER IS NOT LOGGED IN
         {}
@@ -45,13 +46,14 @@ module Wiki
           # this user_id is just a var, but now they are tagged?
           session['user_id'] = returning_user['user_id']
           session['logged_in'] = true
+          session['user_name'] = returning_user['user_name']
           # binding.pry
           erb :index
         else
-          erb :index
+          erb :login
         end
       else
-        redirect '/signup'
+        erb :new_user
       end
     end
 
@@ -62,8 +64,13 @@ module Wiki
     post "/new_article" do
       markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
       md = markdown.render(params["new_article"])
+      page_title = params["page_title"]
 
-      conn.exec_params("INSERT INTO revision (rev_text) VALUES ($1);", [md])
+      conn.exec_params("INSERT INTO page (page_title) VALUES ($1);", [page_title])
+      newest_page = conn.exec("SELECT * FROM page").to_a.last
+      conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text) VALUES ($1, $2, $3, $4);", [newest_page["page_id"], session["user_id"], session["user_name"],md])
+
+      erb
     end
 
 
