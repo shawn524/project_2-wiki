@@ -4,12 +4,11 @@ module Wiki
     enable :sessions
 
     def current_user
-      if session["user_id"]
-        @user ||= conn.exec_params("SELECT * FROM users WHERE user_id = $1", [ session[ "user_id" ] ])
-      else
-        # THE USER IS NOT LOGGED IN
-        {}
-      end
+      @user ||= conn.exec_params("SELECT * FROM users WHERE user_id = $1", [ session[ "user_id" ] ]).first if session["user_id"]
+    end
+
+    def logged_in?
+      current_user
     end
 
     get "/" do
@@ -30,6 +29,11 @@ module Wiki
       redirect "/"
     end
 
+    get "/logout" do
+      session.delete("user_id")
+      redirect "/"
+    end
+
     get "/login" do
       erb :login
     end
@@ -37,21 +41,13 @@ module Wiki
     post '/login' do
       user_name = params[ 'user_name' ]
       password = params[ 'password' ]
+      user = conn.exec_params("SELECT * FROM users WHERE user_name = $1;",[ user_name ]).first
 
-      returning_user = conn.exec_params("SELECT * FROM users WHERE user_name = $1;",[ user_name ]).first
-      if returning_user.any?
-        check = BCrypt::Password.new(returning_user[ 'user_password' ])
-        if check == password
-          # this user_id is just a var, but now they are tagged?
-          session[ 'user_id' ] = returning_user[ 'user_id' ]
-          session[ 'logged_in' ] = true
-          session[ 'user_name' ] = returning_user[ 'user_name' ]
-          erb :index
-        else
-          erb :login
-        end
+      if user.any? && BCrypt::Password.new(user[ 'user_password' ]) == password
+          session[ 'user_id' ] = user[ 'user_id' ]
+          redirect "/"
       else
-        erb :new_user
+        redirect "/login"
       end
     end
 
@@ -108,24 +104,28 @@ module Wiki
 
       @id = params["id"]
 
-      binding.pry
       conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ @id , session["user_id"], session["user_name"], raw_text, md ])
 
       redirect "/article/#{@id}"
 
     end
 
+    get "/article/:id/history" do
+
+    end
+
+    private
 
     def conn
       if ENV["RACK_ENV"] == 'production'
-        PG.connect(
+        @conn ||= PG.connect(
           dbname: ENV["POSTGRES_DB"],
           host: ENV["POSTGRES_HOST"],
           password: ENV["POSTGRES_PASS"],
           user: ENV["POSTGRES_USER"]
         )
       else
-        PG.connect(dbname: "wiki_test")
+        @conn ||= PG.connect(dbname: "wiki_test")
       end
     end
   end

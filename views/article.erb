@@ -2,13 +2,15 @@
   <h1><%= @title %><small></small></h1>
 </div>
 
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <%= @content %>
-    </div>
-    <div class="panel-footer">
-      <a class="btn btn-info btn-sm pull-right" href="/article/<%= @id %>/edit" role="button">Edit</a>
-      <p class="text-muted">Last edit by <%= @last_author %> @ <%= @last_edit %></p>
-    </div>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <%= @content %>
   </div>
+  <div class="panel-footer">
+    <% if logged_in? %>
+      <a class="btn btn-info btn-sm pull-right" href="/article/<%= @id %>/edit" role="button">Edit</a>
+    <% end %>
+    <p class="text-muted"><a href="#">Last edit</a> by <%= @last_author %> @ <%= @last_edit %></p>
+  </div>
+</div>
 
