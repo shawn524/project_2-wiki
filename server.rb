@@ -63,7 +63,7 @@ module Wiki
 
       conn.exec_params("INSERT INTO page (page_title) VALUES ($1);", [ page_title ])
       newest_page = conn.exec("SELECT * FROM page").to_a.last
-      conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ newest_page["page_id"], session["user_id"], session["user_name"], raw_text, md ])
+      conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ newest_page["page_id"], session["user_id"], current_user["user_name"], raw_text, md ])
 
       redirect "/article/#{newest_page[ "page_id" ]}"
     end
@@ -104,13 +104,24 @@ module Wiki
 
       @id = params["id"]
 
-      conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ @id , session["user_id"], session["user_name"], raw_text, md ])
+      conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ @id , session["user_id"], current_user["user_name"], raw_text, md ])
 
       redirect "/article/#{@id}"
 
     end
 
     get "/article/:id/history" do
+      current_page = conn.exec_params("SELECT * FROM page WHERE page_id = $1;", [ params[ "id" ] ]).to_a
+      @all_revs = conn.exec_params("SELECT * FROM revision WHERE rev_page = $1;", [ params[ "id" ] ]).to_a
+      current_rev = @all_revs.last
+
+        @id = params["id"]
+        @title = current_page.first[ "page_title" ]
+        @content = current_rev[ "rev_markdown" ]
+        @last_edit = current_rev[ "rev_created" ].slice(0,19)
+        @last_author = current_rev[ "rev_user_name" ]
+
+        erb :history
 
     end
 
