@@ -1,0 +1,19 @@
+<div class="jumbotron">
+  <div class="form-group">
+    <form id="newArticle" method="post" class="form-horizontal" action="/article/<%= @id %>">
+          <div class="form-group">
+              <div class="col-lg-5">
+                <h3><%=@title%></h3>
+              </div>
+          </div>
+      <label for="comment">Article content:</label>
+      <textarea class="form-control" rows="10" name="update_article" id="update_article"><%=@content%></textarea>
+
+      <div class="form-group">
+          <div class="col-lg-9">
+              <button type="submit" class="btn btn-primary right" name="update" value="update">Update</button>
+          </div>
+      </div>
+    </form>
+  </div>
+</div>

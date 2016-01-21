@@ -1,5 +1,13 @@
 <div class="jumbotron">
   <h1>Wiki</h1>
-  <%= "Logged in: #{session['logged_in']}" %>
-  <%= "#{session['user_id']}" %>
+  <p><%= "Logged in: #{session['logged_in']}" %></p>
+  <p><%= "User ID: #{session['user_id']}" %></p>
+</div>
+
+<div class="container">
+  <% @articles.each do |article| %>
+    <div class="row">
+      <a href="/article/<%= article["page_id"] %>" class="col-md-4 list-group-item"><%= article["page_title"] %></a>
+    </div>
+  <% end %>
 </div>

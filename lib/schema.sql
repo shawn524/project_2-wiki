@@ -37,7 +37,8 @@ CREATE TABLE revision (
   rev_user                  INTEGER   NOT NULL,    -- Link to user id
   rev_user_name             TEXT      NOT NULL,    -- Link to user name
   rev_text                  TEXT      NOT NULL,    -- Page content
-  rev_created               TIMESTAMPTZ
+  rev_markdown              TEXT      NOT NULL,
+  rev_created               TIMESTAMPTZ default current_timestamp
 );
 
 CREATE TABLE tags (
