@@ -84,6 +84,7 @@ module Wiki
         @content = current_rev[ "rev_markdown" ]
         @last_edit = current_rev[ "rev_created" ].slice(0,19)
         @last_author = current_rev[ "rev_user_name" ]
+        @author_id = current_rev[ "rev_user" ]
         @tag = current_page.first[ "tag_name" ]
 
       erb :article
@@ -137,12 +138,20 @@ module Wiki
       @id = @tag["tag_id"].to_i
       @pages = conn.exec_params("SELECT * FROM page WHERE page_tag = $1;", [ @id ]).to_a
 
-        # @content = current_rev[ "rev_markdown" ]
-        # @last_edit = current_rev[ "rev_created" ].slice(0,19)
-        # @last_author = current_rev[ "rev_user_name" ]
-
-
       erb :tags
+    end
+
+    get "/search" do
+      @query = "%#{params['query']}%"
+      @result = conn.exec_params("SELECT * FROM page WHERE page_title ILIKE $1;", [ @query ]).to_a
+
+      erb :search
+    end
+
+    get "/user/:id" do
+      @user = conn.exec_params("SELECT * FROM users WHERE user_id = $1;",[ params[ "id" ] ]).first
+      @posts = conn.exec_params("SELECT * FROM revision WHERE rev_user = $1;",[ @user[ "user_id" ] ]).to_a
+      erb :user
     end
 
     private

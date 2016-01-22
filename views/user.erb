@@ -1,0 +1,14 @@
+  <div class="page-header">
+    <h2><%= @user["user_name"] %></h1>
+  </div>
+
+<% @posts.reverse.each do |post| %>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <%= post["rev_markdown"] %>
+  </div>
+  <div class="panel-footer">
+    <p class="text-muted"><%= post["rev_created"].slice(0,19) %></p>
+  </div>
+</div>
+<% end %>

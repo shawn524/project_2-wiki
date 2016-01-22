@@ -1,0 +1,12 @@
+<div class="page-header">
+  <h1><%= @query.gsub("%", "\"") %></h1>
+</div>
+
+
+<div class="container">
+    <% @result.each do |result| %>
+      <div class="row">
+        <a href="/article/<%= result["page_id"] %>" class="col-md-4 list-group-item"><%= result["page_title"] %></a>
+      </div>
+    <% end %>
+</div>
