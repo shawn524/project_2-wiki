@@ -49,11 +49,12 @@ module Wiki
       password = params[ 'password' ]
       user = conn.exec_params("SELECT * FROM users WHERE user_name = $1;",[ user_name ]).first
 
-      if user.any? && BCrypt::Password.new(user[ 'user_password' ]) == password
+      if user != nil && BCrypt::Password.new(user[ 'user_password' ]) == password
           session[ 'user_id' ] = user[ 'user_id' ]
           redirect "/"
       else
-        redirect "/login"
+        @error = true
+        erb :login
       end
     end
 
