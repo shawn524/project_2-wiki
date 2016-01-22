@@ -25,7 +25,12 @@ module Wiki
       password = BCrypt::Password.create(params[ "password" ])
       email = params[ "email" ]
 
-      conn.exec_params("INSERT INTO users (user_name, user_password, user_email) VALUES ($1,$2,$3);",[ user_name, password, email ])
+      begin
+        conn.exec_params("INSERT INTO users (user_name, user_password, user_email) VALUES ($1,$2,$3);",[ user_name, password, email ])
+      rescue
+        @error = true
+        redirect back
+      end
       redirect "/"
     end
 
@@ -63,13 +68,16 @@ module Wiki
       page_title = params[ "page_title" ]
       tag = params[ "page_tag" ]
 
-      # conn.exec_params("INSERT INTO tags (tag_name) VALUES ($1);", [ tag ])
       tag_id = conn.exec_params("SELECT tag_id FROM tags WHERE tag_name = $1;",[ tag ]).first
 
-      conn.exec_params("INSERT INTO page (page_title, page_tag) VALUES ($1, $2);", [ page_title, tag_id["tag_id"] ])
+      begin
+        conn.exec_params("INSERT INTO page (page_title, page_tag) VALUES ($1, $2);", [ page_title, tag_id["tag_id"] ])
 
-      newest_page = conn.exec("SELECT * FROM page").to_a.last
-      conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ newest_page["page_id"], session["user_id"], current_user["user_name"], raw_text, md ])
+        newest_page = conn.exec("SELECT * FROM page").to_a.last
+        conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ newest_page["page_id"], session["user_id"], current_user["user_name"], raw_text, md ])
+      rescue
+        redirect back
+      end
 
       redirect "/article/#{newest_page[ "page_id" ]}"
     end
@@ -152,6 +160,13 @@ module Wiki
       @user = conn.exec_params("SELECT * FROM users WHERE user_id = $1;",[ params[ "id" ] ]).first
       @posts = conn.exec_params("SELECT * FROM revision WHERE rev_user = $1;",[ @user[ "user_id" ] ]).to_a
       erb :user
+    end
+
+    get "/random" do
+      @pages = conn.exec("SELECT * FROM page;").to_a
+      @random = @pages.sample
+
+      redirect "/article/#{@random[ "page_id" ]}"
     end
 
     private

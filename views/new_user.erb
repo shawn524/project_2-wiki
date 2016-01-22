@@ -1,8 +1,11 @@
-<section>
   <div class="col-lg-8 col-lg-offset-2">
       <div class="page-header">
           <h2>Sign up</h2>
       </div>
+
+      <% if @error %>
+        <div class="alert alert-danger" role="alert">Username already exits</div>
+      <% end %>
 
       <form id="newUserForm" method="post" class="form-horizontal" action="/signup">
 
@@ -41,4 +44,3 @@
           </div>
       </form>
   </div>
-</section>

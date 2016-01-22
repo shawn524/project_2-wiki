@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS image CASCADE;
 DROP TABLE IF EXISTS page CASCADE;
 DROP TABLE IF EXISTS revision CASCADE;
-DROP TABLE IF EXISTS tags CASCADE;
+/* DROP TABLE IF EXISTS tags CASCADE; */
 
 CREATE TABLE users (
   user_id                   SERIAL    PRIMARY KEY,
@@ -27,7 +27,7 @@ CREATE TABLE image (
 CREATE TABLE page (
   page_id                   SERIAL    PRIMARY KEY,
   page_url                  TEXT,
-  page_title                TEXT      NOT NULL,
+  page_title                TEXT      NOT NULL UNIQUE,
   page_tag                  INTEGER
 );
 
