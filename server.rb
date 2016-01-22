@@ -52,6 +52,7 @@ module Wiki
     end
 
     get "/article/new" do
+      @tags = conn.exec("SELECT * FROM tags").to_a
       erb :new_article
     end
 
@@ -62,10 +63,9 @@ module Wiki
       page_title = params[ "page_title" ]
       tag = params[ "page_tag" ]
 
-      conn.exec_params("INSERT INTO tags (tag_name) VALUES ($1);", [ tag ])
+      # conn.exec_params("INSERT INTO tags (tag_name) VALUES ($1);", [ tag ])
       tag_id = conn.exec_params("SELECT tag_id FROM tags WHERE tag_name = $1;",[ tag ]).first
 
-      binding.pry
       conn.exec_params("INSERT INTO page (page_title, page_tag) VALUES ($1, $2);", [ page_title, tag_id["tag_id"] ])
 
       newest_page = conn.exec("SELECT * FROM page").to_a.last
@@ -75,7 +75,7 @@ module Wiki
     end
 
     get "/article/:id" do
-      current_page = conn.exec_params("SELECT * FROM page WHERE page_id = $1;", [ params[ "id" ] ]).to_a
+      current_page = conn.exec_params("SELECT * FROM page JOIN tags ON page.page_tag = tags.tag_id WHERE page.page_id = $1;", [ params[ "id" ] ]).to_a
       all_revs = conn.exec_params("SELECT * FROM revision WHERE rev_page = $1;", [ params[ "id" ] ]).to_a
       current_rev = all_revs.last
 
@@ -84,6 +84,7 @@ module Wiki
         @content = current_rev[ "rev_markdown" ]
         @last_edit = current_rev[ "rev_created" ].slice(0,19)
         @last_author = current_rev[ "rev_user_name" ]
+        @tag = current_page.first[ "tag_name" ]
 
       erb :article
     end
@@ -129,6 +130,19 @@ module Wiki
 
         erb :history
 
+    end
+
+    get "/article/tag/:name" do
+      @tag = conn.exec_params("SELECT * FROM tags WHERE tag_name = $1;", [ params[ "name" ] ]).first
+      @id = @tag["tag_id"].to_i
+      @pages = conn.exec_params("SELECT * FROM page WHERE page_tag = $1;", [ @id ]).to_a
+
+        # @content = current_rev[ "rev_markdown" ]
+        # @last_edit = current_rev[ "rev_created" ].slice(0,19)
+        # @last_author = current_rev[ "rev_user_name" ]
+
+
+      erb :tags
     end
 
     private

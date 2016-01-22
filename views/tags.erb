@@ -1,0 +1,12 @@
+<div class="page-header">
+  <h1><%= @tag["tag_name"] %></h1>
+</div>
+
+
+<div class="container">
+    <% @pages.each do |page| %>
+      <div class="row">
+        <a href="/article/<%= page["page_id"] %>" class="col-md-4 list-group-item"><%= page["page_title"] %></a>
+      </div>
+    <% end %>
+</div>

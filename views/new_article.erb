@@ -7,20 +7,27 @@
                   <input type="text" class="form-control" name="page_title" />
               </div>
           </div>
-      <label for="tag" class="control-label">Article tag:</label>
-          <div class="form-group">
-              <div class="col-lg-5">
-                  <input type="text" class="form-control" name="page_tag" />
-              </div>
-          </div>
+
       <label for="content">Article content:</label>
       <textarea class="form-control" rows="10" name="new_article" id="new_article" name="page_content"></textarea>
 
+
+      <div>
+        <select class="selectpicker dropup" data-live-search="true" data-size="5" name="page_tag" title="Article tag">
+          <% @tags.each do |tag| %>
+            <option><%= tag["tag_name"] %></option>
+          <% end %>
+        </select>
+      </div>
+
       <div class="form-group">
           <div class="col-lg-9">
+            <% if logged_in? %>
               <button type="submit" class="btn btn-primary right" name="publish" value="publish">Publish</button>
+            <% end %>
           </div>
       </div>
+
     </form>
   </div>
 </div>

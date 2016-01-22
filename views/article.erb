@@ -8,9 +8,10 @@
   </div>
   <div class="panel-footer">
     <% if logged_in? %>
-      <a class="btn btn-info btn-sm pull-right" href="/article/<%= @id %>/edit" role="button">Edit</a>
+      <a class="btn btn-info  pull-right" href="/article/<%= @id %>/edit" role="button">Edit</a>
     <% end %>
     <p class="text-muted"><a href="/article/<%= @id %>/history">Last edit</a> by <%= @last_author %> @ <%= @last_edit %></p>
+    <a class="btn btn-primary btn-sm " href="/article/tag/<%= @tag %>" role="button"><%= @tag %></a>
   </div>
 </div>
 
