@@ -25,13 +25,14 @@ module Wiki
       password = BCrypt::Password.create(params[ "password" ])
       email = params[ "email" ]
 
-      begin
+      exist = conn.exec_params("SELECT user_name FROM users WHERE user_name = $1", [ user_name ]).first
+      unless exist
         conn.exec_params("INSERT INTO users (user_name, user_password, user_email) VALUES ($1,$2,$3);",[ user_name, password, email ])
-      rescue
+        redirect "/"
+      else
         @error = true
-        redirect back
+        erb :new_user
       end
-      redirect "/"
     end
 
     get "/logout" do
@@ -70,16 +71,22 @@ module Wiki
 
       tag_id = conn.exec_params("SELECT tag_id FROM tags WHERE tag_name = $1;",[ tag ]).first
 
-      begin
+
+      exist = conn.exec_params("SELECT page_title FROM page WHERE page_title = $1", [ page_title ]).first
+
+      unless exist
         conn.exec_params("INSERT INTO page (page_title, page_tag) VALUES ($1, $2);", [ page_title, tag_id["tag_id"] ])
 
         newest_page = conn.exec("SELECT * FROM page").to_a.last
         conn.exec_params("INSERT INTO revision (rev_page, rev_user, rev_user_name, rev_text, rev_markdown) VALUES ($1, $2, $3, $4, $5);", [ newest_page["page_id"], session["user_id"], current_user["user_name"], raw_text, md ])
-      rescue
-        redirect back
+
+        redirect "/article/#{newest_page[ "page_id" ]}"
+      else
+        @error = true
+        @tags = conn.exec("SELECT * FROM tags").to_a
+        erb :new_article
       end
 
-      redirect "/article/#{newest_page[ "page_id" ]}"
     end
 
     get "/article/:id" do
