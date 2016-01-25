@@ -65,8 +65,10 @@ module Wiki
 
     post "/article/new" do
       markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      md = markdown.render(params[ "new_article" ])
-      raw_text = params["new_article"]
+      sanitize = Sanitize.fragment( params[ "new_article" ] )
+      md = markdown.render(sanitize)
+      raw_text = sanitize
+      binding.pry
       page_title = params[ "page_title" ]
       tag = params[ "page_tag" ]
 
@@ -123,8 +125,9 @@ module Wiki
 
     post "/article/:id" do
       markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      md = markdown.render(params[ "update_article" ])
-      raw_text = params["update_article"]
+      sanitize = Sanitize.fragment( params[ "update_article" ] )
+      md = markdown.render(sanitize)
+      raw_text = sanitize
 
       @id = params["id"]
 

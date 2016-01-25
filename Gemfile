@@ -8,3 +8,4 @@ gem 'redcarpet' # https://github.com/vmg/redcarpet
 gem 'bcrypt' # https://github.com/codahale/bcrypt-ruby
 gem 'pg'
 gem 'pry'
+gem 'sanitize'

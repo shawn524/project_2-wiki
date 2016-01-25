@@ -4,8 +4,14 @@ GEM
     backports (3.6.7)
     bcrypt (3.1.10)
     coderay (1.1.0)
+    crass (1.0.2)
     method_source (0.8.2)
+    mini_portile2 (2.0.0)
     multi_json (1.11.2)
+    nokogiri (1.6.7.1)
+      mini_portile2 (~> 2.0.0.rc2)
+    nokogumbo (1.4.7)
+      nokogiri
     pg (0.18.4)
     pry (0.10.3)
       coderay (~> 1.1.0)
@@ -17,6 +23,10 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     redcarpet (3.3.4)
+    sanitize (4.0.1)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.4.4)
+      nokogumbo (~> 1.4.1)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -39,6 +49,7 @@ DEPENDENCIES
   pg
   pry
   redcarpet
+  sanitize
   sinatra
   sinatra-contrib
 
