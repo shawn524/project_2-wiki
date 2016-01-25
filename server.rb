@@ -68,8 +68,7 @@ module Wiki
       sanitize = Sanitize.fragment( params[ "new_article" ] )
       md = markdown.render(sanitize)
       raw_text = sanitize
-      binding.pry
-      page_title = params[ "page_title" ]
+      page_title = Sanitize.fragment( params[ "page_title" ] )
       tag = params[ "page_tag" ]
 
       tag_id = conn.exec_params("SELECT tag_id FROM tags WHERE tag_name = $1;",[ tag ]).first
