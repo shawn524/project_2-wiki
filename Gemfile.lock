@@ -6,10 +6,10 @@ GEM
     coderay (1.1.0)
     crass (1.0.2)
     method_source (0.8.2)
-    mini_portile2 (2.0.0)
+    mini_portile2 (2.4.0)
     multi_json (1.11.2)
-    nokogiri (1.6.7.1)
-      mini_portile2 (~> 2.0.0.rc2)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
     nokogumbo (1.4.7)
       nokogiri
     pg (0.18.4)
